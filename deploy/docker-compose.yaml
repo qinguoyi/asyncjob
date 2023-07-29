@@ -1,0 +1,45 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    container_name: asyncjob_postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: '123456'
+      POSTGRES_USER: 'postgres'
+    ports:
+      - '5432:5432'
+    volumes:
+      - /home/lighthouse/pg:/var/lib/postgresql/data   # /home/lighthouse/pg 修改为你的路径
+    networks:
+      - app-network
+
+  redis:
+    image: redis
+    container_name: asyncjob_redis
+    restart: always
+    ports:
+      - '6379:6379'
+    volumes:
+      - /home/lighthouse/redis:/data                  # /home/lighthouse/redis 修改为你的路径
+    networks:
+      - app-network
+    command: --requirepass '123456'
+
+  app:
+    image: qinguoyi/asyncjob:0.4         # 修改为你的镜像
+    container_name: asyncjob
+    restart: always
+    networks:
+      - app-network
+    ports:
+      - '8888:8888'
+    volumes:
+      - /home/lighthouse/conf:/asyncjob/conf         # /home/lighthouse/conf 修改为你的路径
+    depends_on:
+      - db
+      - redis
+
+networks:
+  app-network:
+    driver: bridge

@@ -1,0 +1,247 @@
+basePath: /
+definitions:
+  models.AsyncJob:
+    properties:
+      body:
+        description: 任务消息体
+      retryCount:
+        description: 任务重试次数
+        type: integer
+      startTime:
+        description: 启动时间
+        type: string
+      ttl:
+        description: 任务超时时间, 秒
+        type: integer
+      type:
+        description: 任务类型
+        type: string
+    required:
+    - body
+    - ttl
+    - type
+    type: object
+  models.JobInfo:
+    properties:
+      error:
+        description: 错误信息
+        type: string
+      queueInfo:
+        description: 当前排队号/总排队号
+        type: string
+      startTime:
+        description: 下次启动时间
+        type: string
+      status:
+        description: 任务状态
+        type: string
+      type:
+        description: 周期/非周期任务
+        type: string
+      uuid:
+        description: 任务ID
+        type: string
+    type: object
+  models.PeriodicJob:
+    properties:
+      body:
+        description: 任务消息体
+      cronSpec:
+        description: cron语法
+        type: string
+      retryCount:
+        description: 任务重试次数
+        type: integer
+      ttl:
+        description: 任务超时时间, 秒
+        type: integer
+      type:
+        description: 任务类型
+        type: string
+    required:
+    - body
+    - cronSpec
+    - ttl
+    - type
+    type: object
+  web.Response:
+    properties:
+      code:
+        description: 自定义错误码
+        type: integer
+      data:
+        description: 数据
+      message:
+        description: 信息
+        type: string
+    type: object
+host: 127.0.0.1:8888
+info:
+  contact:
+    name: qinguoyi
+  title: asyncjob
+  version: "1.0"
+paths:
+  /api/async/v0/health:
+    get:
+      consumes:
+      - application/json
+      description: 健康检查
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.Response'
+      summary: 健康检查
+      tags:
+      - 检查
+  /api/async/v0/job/{job}:
+    delete:
+      consumes:
+      - application/json
+      description: 删除任务
+      parameters:
+      - description: 任务id
+        in: path
+        name: job
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.Response'
+      summary: 删除任务
+      tags:
+      - 任务删除
+    get:
+      consumes:
+      - application/json
+      description: 查询任务信息
+      parameters:
+      - description: 任务id
+        in: path
+        name: job
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.JobInfo'
+              type: object
+      summary: 查询任务信息
+      tags:
+      - 任务查询
+  /api/async/v0/job/{job}/recovery:
+    patch:
+      consumes:
+      - application/json
+      description: 恢复任务
+      parameters:
+      - description: 任务id
+        in: path
+        name: job
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.Response'
+      summary: 恢复任务
+      tags:
+      - 任务恢复
+  /api/async/v0/job/{job}/terminate:
+    patch:
+      consumes:
+      - application/json
+      description: 终止任务
+      parameters:
+      - description: 任务id
+        in: path
+        name: job
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.Response'
+      summary: 终止任务
+      tags:
+      - 任务终止
+  /api/async/v0/job/async:
+    post:
+      consumes:
+      - application/json
+      description: 异步任务(非周期)投递
+      parameters:
+      - description: 异步任务投递请求体
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.AsyncJob'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.Response'
+      summary: 异步任务(非周期)投递
+      tags:
+      - 任务投递
+  /api/async/v0/job/periodic:
+    post:
+      consumes:
+      - application/json
+      description: 周期任务投递，支持cron语法
+      parameters:
+      - description: 周期任务投递请求体
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.PeriodicJob'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.Response'
+      summary: 周期任务投递，支持cron语法
+      tags:
+      - 任务投递
+  /api/async/v0/ping:
+    get:
+      consumes:
+      - application/json
+      description: 测试接口
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.Response'
+      summary: 测试接口
+      tags:
+      - 测试
+swagger: "2.0"

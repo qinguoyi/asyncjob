@@ -1,0 +1,372 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "asyncjob",
+        "contact": {
+            "name": "qinguoyi"
+        },
+        "version": "1.0"
+    },
+    "host": "127.0.0.1:8888",
+    "basePath": "/",
+    "paths": {
+        "/api/async/v0/health": {
+            "get": {
+                "description": "健康检查",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "检查"
+                ],
+                "summary": "健康检查",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/async/v0/job/async": {
+            "post": {
+                "description": "异步任务(非周期)投递",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "任务投递"
+                ],
+                "summary": "异步任务(非周期)投递",
+                "parameters": [
+                    {
+                        "description": "异步任务投递请求体",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.AsyncJob"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/async/v0/job/periodic": {
+            "post": {
+                "description": "周期任务投递，支持cron语法",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "任务投递"
+                ],
+                "summary": "周期任务投递，支持cron语法",
+                "parameters": [
+                    {
+                        "description": "周期任务投递请求体",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.PeriodicJob"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/async/v0/job/{job}": {
+            "get": {
+                "description": "查询任务信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "任务查询"
+                ],
+                "summary": "查询任务信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "任务id",
+                        "name": "job",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/web.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.JobInfo"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "删除任务",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "任务删除"
+                ],
+                "summary": "删除任务",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "任务id",
+                        "name": "job",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/async/v0/job/{job}/recovery": {
+            "patch": {
+                "description": "恢复任务",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "任务恢复"
+                ],
+                "summary": "恢复任务",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "任务id",
+                        "name": "job",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/async/v0/job/{job}/terminate": {
+            "patch": {
+                "description": "终止任务",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "任务终止"
+                ],
+                "summary": "终止任务",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "任务id",
+                        "name": "job",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/async/v0/ping": {
+            "get": {
+                "description": "测试接口",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "测试"
+                ],
+                "summary": "测试接口",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web.Response"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.AsyncJob": {
+            "type": "object",
+            "required": [
+                "body",
+                "ttl",
+                "type"
+            ],
+            "properties": {
+                "body": {
+                    "description": "任务消息体"
+                },
+                "retryCount": {
+                    "description": "任务重试次数",
+                    "type": "integer"
+                },
+                "startTime": {
+                    "description": "启动时间",
+                    "type": "string"
+                },
+                "ttl": {
+                    "description": "任务超时时间, 秒",
+                    "type": "integer"
+                },
+                "type": {
+                    "description": "任务类型",
+                    "type": "string"
+                }
+            }
+        },
+        "models.JobInfo": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "description": "错误信息",
+                    "type": "string"
+                },
+                "queueInfo": {
+                    "description": "当前排队号/总排队号",
+                    "type": "string"
+                },
+                "startTime": {
+                    "description": "下次启动时间",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "任务状态",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "周期/非周期任务",
+                    "type": "string"
+                },
+                "uuid": {
+                    "description": "任务ID",
+                    "type": "string"
+                }
+            }
+        },
+        "models.PeriodicJob": {
+            "type": "object",
+            "required": [
+                "body",
+                "cronSpec",
+                "ttl",
+                "type"
+            ],
+            "properties": {
+                "body": {
+                    "description": "任务消息体"
+                },
+                "cronSpec": {
+                    "description": "cron语法",
+                    "type": "string"
+                },
+                "retryCount": {
+                    "description": "任务重试次数",
+                    "type": "integer"
+                },
+                "ttl": {
+                    "description": "任务超时时间, 秒",
+                    "type": "integer"
+                },
+                "type": {
+                    "description": "任务类型",
+                    "type": "string"
+                }
+            }
+        },
+        "web.Response": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "自定义错误码",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "数据"
+                },
+                "message": {
+                    "description": "信息",
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
